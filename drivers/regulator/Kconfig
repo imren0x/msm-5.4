@@ -1221,6 +1221,14 @@ config REGULATOR_CPRH_KBSS
 	  independent voltage supplies. This driver reads both initial voltage
 	  and CPR target quotient values out of hardware fuses.
 
+config REGULATOR_MEM_ACC
+	tristate "QTI Memory accelerator regulator driver"
+	help
+	  Say y here to enable the memory accelerator driver for
+	  Qualcomm Technologies, Inc. (QTI) chips. The accelerator
+	  controls delays applied for memory accesses.  This driver
+	  configures the power-mode(corner) for the memory accelerator.
+
 config REGULATOR_REFGEN
 	tristate "Qualcomm Technologies, Inc. REFGEN regulator driver"
 	depends on OF
