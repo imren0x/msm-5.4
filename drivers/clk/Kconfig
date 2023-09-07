@@ -339,3 +339,5 @@ source "drivers/clk/uniphier/Kconfig"
 source "drivers/clk/zynqmp/Kconfig"
 
 endmenu
+
+source "drivers/clk/msm/Kconfig"
