@@ -233,7 +233,7 @@ static int smd_pkt_rpdev_sigs(struct rpmsg_device *rpdev,
 static int smd_pkt_tiocmset(struct smd_pkt_dev *smd_pkt_devp, unsigned int cmd,
 				unsigned long arg)
 {
-	u32 lsigs, rsigs, val;
+	u32 lsigs = 0, rsigs = 0, val;
 	int ret;
 
 	ret = get_user(val, (u32 *)arg);
@@ -280,7 +280,7 @@ static long smd_pkt_ioctl(struct file *file, unsigned int cmd,
 {
 	struct smd_pkt_dev *smd_pkt_devp;
 	unsigned long flags;
-	u32 lsigs, rsigs, resetsigs;
+	u32 lsigs = 0, rsigs = 0, resetsigs;
 	int ret;
 
 	smd_pkt_devp = file->private_data;
