@@ -48,7 +48,6 @@ static inline int clock_debug_register(struct clk *unused)
 {
 	return 0;
 }
-static inline void clock_debug_print_enabled(void) { return; }
 #endif
 
 #endif
