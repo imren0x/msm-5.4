@@ -1453,7 +1453,7 @@ static int rpm_vreg_device_set_voltage_index(struct device *dev,
 }
 
 #ifdef CONFIG_DEBUG_FS
-static void rpm_vreg_create_debugfs(struct rpm_regulator *reg)
+void rpm_vreg_create_debugfs(struct rpm_regulator *reg)
 {
 	struct dentry *entry;
 

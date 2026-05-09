@@ -84,7 +84,7 @@ enum rpm_regulator_mode {
 
 #ifdef CONFIG_DEBUG_FS
 
-static void rpm_vreg_create_debugfs(struct rpm_regulator *reg);
+void rpm_vreg_create_debugfs(struct rpm_regulator *reg);
 
 #else
 
