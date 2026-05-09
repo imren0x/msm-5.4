@@ -1639,7 +1639,7 @@ static const struct msm_pingroup msm8953_groups[] = {
 	SDC_QDSD_PINGROUP(qdsd_data3, 0x19c000, 28, 25),
 };
 
-static const struct msm_pinctrl_soc_data msm8953_pinctrl = {
+static struct msm_pinctrl_soc_data msm8953_pinctrl = {
 	.pins = msm8953_pins,
 	.npins = ARRAY_SIZE(msm8953_pins),
 	.functions = msm8953_functions,
@@ -1649,8 +1649,54 @@ static const struct msm_pinctrl_soc_data msm8953_pinctrl = {
 	.ngpios = 142,
 };
 
+static int msm8953_pinctrl_gpio_irq_map_probe(struct platform_device *pdev)
+{
+	int ret, n, gpio_irq_map_count;
+	struct device_node *np = pdev->dev.of_node;
+	struct msm_gpio_wakeirq_map *gpio_irq_map;
+
+	n = of_property_count_elems_of_size(np, "qcom,gpio-irq-map",
+					sizeof(u32));
+	if (n <= 0 || n % 2)
+		return -EINVAL;
+
+	gpio_irq_map_count = n / 2;
+	gpio_irq_map = devm_kcalloc(&pdev->dev, gpio_irq_map_count,
+				sizeof(*gpio_irq_map), GFP_KERNEL);
+	if (!gpio_irq_map)
+		return -ENOMEM;
+
+	for (n = 0; n < gpio_irq_map_count; n++) {
+		ret = of_property_read_u32_index(np, "qcom,gpio-irq-map",
+						n * 2 + 0,
+						&gpio_irq_map[n].gpio);
+		if (ret)
+			return ret;
+		ret = of_property_read_u32_index(np, "qcom,gpio-irq-map",
+						n * 2 + 1,
+						&gpio_irq_map[n].wakeirq);
+		if (ret)
+			return ret;
+	}
+
+	msm8953_pinctrl.wakeirq_map = gpio_irq_map;
+	msm8953_pinctrl.nwakeirq_map = gpio_irq_map_count;
+
+	return 0;
+}
+
 static int msm8953_pinctrl_probe(struct platform_device *pdev)
 {
+	int len, ret;
+
+	if (of_find_property(pdev->dev.of_node, "qcom,gpio-irq-map", &len)) {
+		ret = msm8953_pinctrl_gpio_irq_map_probe(pdev);
+		if (ret) {
+			dev_err(&pdev->dev,
+				"Unable to parse GPIO IRQ map\n");
+			return ret;
+		}
+	}
 	return msm_pinctrl_probe(pdev, &msm8953_pinctrl);
 }
 
