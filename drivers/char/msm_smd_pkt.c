@@ -200,7 +200,10 @@ static int smd_pkt_rpdev_cb(struct rpmsg_device *rpdev, void *buf, int len,
 	return 0;
 }
 
-static int smd_pkt_rpdev_sigs(struct rpmsg_device *rpdev, u32 old, u32 new)
+static int smd_pkt_rpdev_sigs(struct rpmsg_device *rpdev,
+			      void *priv,
+			      u32 old,
+			      u32 new)
 {
 	struct device_driver *drv = rpdev->dev.driver;
 	struct rpmsg_driver *rpdrv = drv_to_rpdrv(drv);
@@ -237,7 +240,7 @@ static int smd_pkt_tiocmset(struct smd_pkt_dev *smd_pkt_devp, unsigned int cmd,
 	if (ret)
 		return ret;
 
-	ret = rpmsg_get_signals(smd_pkt_devp->rpdev->ept, &lsigs, &rsigs);
+	ret = rpmsg_get_signals(smd_pkt_devp->rpdev->ept);
 	if (ret < 0) {
 		SMD_PKT_ERR("Get signals failed[%d]\n", ret);
 		return ret;
@@ -255,7 +258,9 @@ static int smd_pkt_tiocmset(struct smd_pkt_dev *smd_pkt_devp, unsigned int cmd,
 		break;
 	}
 
-	return rpmsg_set_signals(smd_pkt_devp->rpdev->ept, lsigs);
+	ret = rpmsg_set_signals(smd_pkt_devp->rpdev->ept,
+			lsigs,
+			0);
 	SMD_PKT_INFO("sigs[0x%x] ret[%d]\n", lsigs, ret);
 	return ret;
 }
@@ -317,7 +322,7 @@ static long smd_pkt_ioctl(struct file *file, unsigned int cmd,
 		}
 		spin_unlock_irqrestore(&smd_pkt_devp->queue_lock, flags);
 
-		ret = rpmsg_get_signals(smd_pkt_devp->rpdev->ept, &lsigs, &rsigs);
+		ret = rpmsg_get_signals(smd_pkt_devp->rpdev->ept);
 		if (!ret)
 			ret = put_user(rsigs | resetsigs,
 				       (uint32_t __user *)arg);
