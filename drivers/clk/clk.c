@@ -4677,15 +4677,16 @@ int clk_notifier_unregister(struct clk *clk, struct notifier_block *nb)
 	return ret;
 }
 EXPORT_SYMBOL_GPL(clk_notifier_unregister);
-#endif /* CONFIG_COMMON_CLK */
 
-#ifdef CONFIG_OF
 static void clk_core_reparent_orphans(void)
 {
 	clk_prepare_lock();
 	clk_core_reparent_orphans_nolock();
 	clk_prepare_unlock();
 }
+#endif /* CONFIG_COMMON_CLK */
+
+#ifdef CONFIG_OF
 
 /**
  * struct of_clk_provider - Clock provider registration structure
