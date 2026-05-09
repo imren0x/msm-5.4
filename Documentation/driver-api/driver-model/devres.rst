@@ -244,7 +244,6 @@ certainly invest a bit more effort into libata core layer).
 
 CLOCK
   devm_clk_get()
-  devm_clk_get_optional()
   devm_clk_put()
   devm_clk_bulk_get()
   devm_clk_bulk_get_all()
